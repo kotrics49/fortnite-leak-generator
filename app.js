@@ -1,4 +1,4 @@
-const API_URL = "https://fortnite-api.com/v2/cosmetics/new";
+const API_URL = "https://fortnite-api.com/v2/cosmetics/new?language=en";
 const $ = (id) => document.getElementById(id);
 let cosmetics = [];
 
