@@ -355,14 +355,7 @@ async function generate() {
     `Elkészült! ${count} ajánlat egyetlen képen.`
   );
 }
-  const link = $("download");
-  link.href = canvas.toDataURL("image/png");
-  link.download = "fortnite-item-shop.png";
-  link.hidden = false;
-  link.textContent = "TikTok-kép letöltése";
 
-  setMessage(`Elkészült! Mind a ${count} tárgy egyetlen képen látható.`);
-}
 
 $("fetchBtn").addEventListener("click", fetchCosmetics);
 $("generateBtn").addEventListener("click", generate);
