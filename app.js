@@ -17,10 +17,7 @@ function pickImage(item) {
 function normalize(data) {
   const shop = data?.data;
 
-  const entries = [
-    ...(shop?.featured?.entries || []),
-    ...(shop?.daily?.entries || [])
-  ];
+  const entries = shop?.entries || [];
 
   if (!entries.length) {
     throw new Error("Nem találhatók Item Shop ajánlatok.");
