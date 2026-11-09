@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10121b">
+  <title>Fortnite Leak Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand-mark">F</div>
+      <div>
+        <div class="brand">FORTNITE <span>LEAK GENERATOR</span></div>
+        <div class="subbrand">Kozmetikai adatfigyelő és képgenerátor</div>
+      </div>
+      <span class="status" id="status">KÉSZENLÉT</span>
+    </header>
+
+    <section class="hero">
+      <p class="eyebrow">KÖZÖSSÉGI ADATFIGYELŐ</p>
+      <h1>Új kozmetikumok</h1>
+      <p class="muted">A Fortnite-API legújabb kozmetikai bejegyzéseinek áttekintése.</p>
+    </section>
+
+    <section class="actions panel">
+      <button id="fetchBtn" class="primary">↻ Adatok lekérése</button>
+      <button id="generateBtn" class="secondary" disabled>▧ TikTok-kép generálása</button>
+      <div class="settings">
+        <label for="perPage">Elemek oldalanként</label>
+        <select id="perPage">
+          <option value="6">6</option>
+          <option value="8" selected>8</option>
+          <option value="10">10</option>
+          <option value="12">12</option>
+        </select>
+        <label class="check"><input type="checkbox" id="showRarity" checked> Ritkaság megjelenítése</label>
+      </div>
+      <p id="message" class="message">Nyomd meg az „Adatok lekérése” gombot a kezdéshez.</p>
+    </section>
+
+    <section class="stats">
+      <article class="stat panel"><span>Összes új bejegyzés</span><strong id="totalCount">—</strong></article>
+      <article class="stat panel"><span>Outfit</span><strong id="outfitCount">—</strong></article>
+      <article class="stat panel"><span>Egyéb kozmetikum</span><strong id="otherCount">—</strong></article>
+    </section>
+
+    <section class="panel list-panel">
+      <div class="section-heading">
+        <div><p class="eyebrow">LEKÉRDEZETT ADATOK</p><h2>Kozmetikai lista</h2></div>
+        <span id="updated" class="muted small"></span>
+      </div>
+      <div id="items" class="items empty">Még nincsenek lekért adatok.</div>
+    </section>
+
+    <section class="panel preview-panel">
+      <div class="section-heading">
+        <div><p class="eyebrow">EXPORT ELŐNÉZET</p><h2>TikTok-grafika</h2></div>
+        <span class="muted small">1080 × 1920 px</span>
+      </div>
+      <div class="preview-wrap"><canvas id="art" width="1080" height="1920" aria-label="TikTok grafika előnézete"></canvas></div>
+      <a id="download" class="download" hidden download="fortnite-uj-kozmetikumok.png">PNG letöltése</a>
+      <p class="muted small">A grafika a lekért adatokból készül. Az újonnan hozzáadott tárgy nem feltétlenül jelent még meg nem jelent tartalmat.</p>
+    </section>
+
+    <footer>Nem hivatalos közösségi eszköz. Nem áll kapcsolatban az Epic Games-szel.</footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
