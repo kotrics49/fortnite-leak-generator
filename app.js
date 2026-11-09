@@ -16,23 +16,57 @@ function rarity(item){
   return item.rarity?.displayValue||item.rarity?.value||"Ismeretlen";
 }
 function normalize(data){
-  const payload=data?.data;
-  let list=[];
-  if(Array.isArray(payload)) list=payload;
-  else if(payload && Array.isArray(payload.items)) list=payload.items;
-  else if(payload && typeof payload === "object") {
-    // A /v2/cosmetics/new válasza több kategóriát is tartalmazhat (BR, LEGO, tracks stb.).
-    for(const [key, value] of Object.entries(payload)) {
-      if(value && Array.isArray(value.items)) {
-        list.push(...value.items.map(item=>({...item, _apiCategory:key})));
-      } else if(Array.isArray(value)) {
+
+  const payload = data?.data;
+
+  const groups = payload?.items || payload;
+
+  let list = [];
+
+  if(Array.isArray(groups)){
+
+    list = groups;
+
+  } else if(groups && typeof groups === "object"){
+
+    for(const [key, value] of Object.entries(groups)){
+
+      if(Array.isArray(value)){
+
         list.push(...value.map(item=>({...item, _apiCategory:key})));
+
+      } else if(Array.isArray(value?.items)){
+
+        list.push(...value.items.map(item=>({...item, _apiCategory:key})));
+
       }
+
     }
+
   }
-  if(!list.length) throw new Error("Nem találtam kozmetikai elemeket a válaszban. Lehet, hogy jelenleg nincs új elem, vagy változott az API válaszformátuma.");
-  return list.map(x=>({id:x.id,name:x.name||"Névtelen tárgy",type:category(x),rarity:rarity(x),set:x.set?.text||x.series?.name||"",image:pickImage(x)}))
-    .filter(x=>x.image);
+
+  if(!list.length){
+
+    throw new Error("Nem találhatók új kozmetikai elemek az API válaszában.");
+
+  }
+
+  return list.map(x=>({
+
+    id:x.id,
+
+    name:x.name || "Névtelen tárgy",
+
+    type:category(x),
+
+    rarity:rarity(x),
+
+    set:x.set?.text || x.series?.name || "",
+
+    image:pickImage(x)
+
+  })).filter(x=>x.image);
+
 }
 function renderList(){
   const root=$("items");
