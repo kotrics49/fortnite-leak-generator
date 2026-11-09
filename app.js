@@ -250,7 +250,7 @@ async function generate() {
   const gap = 5;
 
   const cardW = (W - margin * 2 - gap * (cols - 1)) / cols;
-  const cardH = (H - margin * 2 - gap * (rows - 1)) / rows;
+const cardH = cardW;
 
   // Háttér
   ctx.fillStyle = "#111111";
