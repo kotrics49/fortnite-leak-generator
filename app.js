@@ -15,52 +15,90 @@ function pickImage(item) {
 }
 
 function normalize(data) {
-  const entries = data?.data?.entries;
+  const shop = data?.data;
 
-  if (!Array.isArray(entries)) {
-    throw new Error("Nem sikerült beolvasni az Item Shop adatait.");
+  const entries = [
+    ...(shop?.featured?.entries || []),
+    ...(shop?.daily?.entries || [])
+  ];
+
+  if (!entries.length) {
+    throw new Error("Nem találhatók Item Shop ajánlatok.");
   }
 
-  const list = [];
+  const bundleItemIds = new Set();
 
   for (const entry of entries) {
-    const groups = [
-      entry.brItems,
-      entry.items,
-      entry.tracks,
-      entry.instruments,
-      entry.cars,
-      entry.legoKits
-    ];
-
-    for (const group of groups) {
-      if (Array.isArray(group)) {
-        list.push(...group);
+    if (entry.bundle) {
+      for (const item of entry.items || []) {
+        if (item.id) bundleItemIds.add(item.id);
       }
     }
   }
 
-  const unique = new Map();
+  const rarityColors = {
+    common: "#a0a0a0",
+    uncommon: "#55aa44",
+    rare: "#35a9ed",
+    epic: "#a34be8",
+    legendary: "#e99532",
+    mythic: "#e8bd35",
+    marvel: "#d52d43",
+    dc: "#2774c9",
+    icon: "#e7a3d8",
+    gaming: "#d4a2e8"
+  };
 
-  for (const item of list) {
-    const image = pickImage(item);
-    if (!item.name || !image) continue;
+  const result = [];
 
-    const id = item.id || item.name + image;
+  for (const entry of entries) {
+    const items = entry.items || [];
+    const bundle = entry.bundle;
 
-    if (!unique.has(id)) {
-      unique.set(id, {
-        id,
+    if (bundle) {
+      const firstItem = items[0];
+      const image =
+        bundle.image ||
+        firstItem?.images?.featured ||
+        firstItem?.images?.icon ||
+        "";
+
+      if (image) {
+        result.push({
+          id: entry.offerId || bundle.name,
+          name: bundle.name || "Bundle",
+          image,
+          color: "#a34be8"
+        });
+      }
+
+      continue;
+    }
+
+    for (const item of items) {
+      if (!item.id || bundleItemIds.has(item.id)) continue;
+
+      const image =
+        item.images?.featured ||
+        item.images?.icon ||
+        item.images?.smallIcon ||
+        "";
+
+      if (!image) continue;
+
+      const rarity = (
+        item.rarity?.value ||
+        item.rarity?.name ||
+        "common"
+      ).toLowerCase();
+
+      result.push({
+        id: item.id,
         name: item.name,
-        image
+        image,
+        color: rarityColors[rarity] || "#64748b"
       });
     }
-  }
-
-  const result = [...unique.values()];
-
-  if (!result.length) {
-    throw new Error("Nem találtam megjeleníthető tárgyakat a shopban.");
   }
 
   return result;
