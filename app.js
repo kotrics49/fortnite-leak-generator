@@ -156,105 +156,99 @@ async function generate() {
 
   const canvas = $("art");
   const ctx = canvas.getContext("2d");
+
   const W = 1080;
   const H = 1920;
 
   canvas.width = W;
   canvas.height = H;
 
-  const perPage = Number($("perPage").value) || 8;
-  const pageCount = Math.ceil(cosmetics.length / perPage);
-  const pages = [];
+  const count = cosmetics.length;
 
-  for (let page = 0; page < pageCount; page++) {
-    ctx.fillStyle = "#10131e";
-    ctx.fillRect(0, 0, W, H);
+  let cols = 2;
+  if (count > 12) cols = 3;
+  if (count > 24) cols = 4;
+  if (count > 40) cols = 5;
 
-    const part = cosmetics.slice(
-      page * perPage,
-      (page + 1) * perPage
-    );
+  const rows = Math.ceil(count / cols);
 
-    const cols = 2;
-    const rows = Math.ceil(part.length / cols);
-    const left = 55;
-    const top = 55;
-    const gapX = 25;
-    const gapY = 22;
-    const cardW = 472;
-    const cardH = (1810 - (rows - 1) * gapY) / rows;
+  const margin = 35;
+  const gap = 14;
 
-    for (let i = 0; i < part.length; i++) {
-      const item = part[i];
-      const col = i % cols;
-      const row = Math.floor(i / cols);
+  const cardW = (W - margin * 2 - gap * (cols - 1)) / cols;
+  const cardH = (H - margin * 2 - gap * (rows - 1)) / rows;
 
-      const x = left + col * (cardW + gapX);
-      const y = top + row * (cardH + gapY);
+  ctx.fillStyle = "#10131e";
+  ctx.fillRect(0, 0, W, H);
 
-      roundedRect(ctx, x, y, cardW, cardH, 22, "#202638");
+  for (let i = 0; i < count; i++) {
+    const item = cosmetics[i];
 
-      const img = await loadImage(item.image);
+    const col = i % cols;
+    const row = Math.floor(i / cols);
 
-      if (img) {
-        const areaTop = y + 15;
-        const areaHeight = cardH - 95;
-        const maxW = cardW - 35;
-        const maxH = areaHeight - 15;
+    const x = margin + col * (cardW + gap);
+    const y = margin + row * (cardH + gap);
 
-        const scale = Math.min(
-          maxW / img.width,
-          maxH / img.height
-        );
+    roundedRect(ctx, x, y, cardW, cardH, 16, "#202638");
 
-        const iw = img.width * scale;
-        const ih = img.height * scale;
+    const img = await loadImage(item.image);
 
-        ctx.drawImage(
-          img,
-          x + (cardW - iw) / 2,
-          areaTop + (maxH - ih) / 2,
-          iw,
-          ih
-        );
-      }
+    if (img) {
+      const imageAreaHeight = cardH - 42;
+      const maxW = cardW - 12;
+      const maxH = imageAreaHeight - 8;
 
-      ctx.fillStyle = "#ffffff";
-      ctx.textAlign = "center";
-      ctx.font = "bold 25px Arial";
+      const scale = Math.min(
+        maxW / img.width,
+        maxH / img.height
+      );
 
-      let name = item.name;
-      while (ctx.measureText(name).width > cardW - 30 && name.length > 5) {
-        name = name.slice(0, -2) + "…";
-      }
+      const iw = img.width * scale;
+      const ih = img.height * scale;
 
-      ctx.fillText(name, x + cardW / 2, y + cardH - 35);
+      ctx.drawImage(
+        img,
+        x + (cardW - iw) / 2,
+        y + 4 + (imageAreaHeight - ih) / 2,
+        iw,
+        ih
+      );
     }
 
-    pages.push(canvas.toDataURL("image/png"));
+    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    const fontSize = Math.max(
+      12,
+      Math.min(25, cardW / 11, cardH / 7)
+    );
+
+    ctx.font = `bold ${fontSize}px Arial`;
+
+    let name = item.name;
+    while (
+      ctx.measureText(name).width > cardW - 12 &&
+      name.length > 4
+    ) {
+      name = name.slice(0, -2) + "…";
+    }
+
+    ctx.fillText(
+      name,
+      x + cardW / 2,
+      y + cardH - 21
+    );
   }
 
   const link = $("download");
-  link.href = pages[0];
-  link.hidden = false;
-  link.textContent = pageCount > 1
-    ? `1. oldal letöltése (${pageCount} oldal)`
-    : "PNG letöltése";
-
+  link.href = canvas.toDataURL("image/png");
   link.download = "fortnite-item-shop.png";
+  link.hidden = false;
+  link.textContent = "TikTok-kép letöltése";
 
-  const preview = new Image();
-  preview.onload = () => {
-    ctx.clearRect(0, 0, W, H);
-    ctx.drawImage(preview, 0, 0);
-  };
-  preview.src = pages[0];
-
-  if (pageCount > 1) {
-    setMessage(`${pageCount} oldal készült. Egyelőre az első oldal tölthető le.`);
-  } else {
-    setMessage("Elkészült a TikTok-kép!");
-  }
+  setMessage(`Elkészült! Mind a ${count} tárgy egyetlen képen látható.`);
 }
 
 $("fetchBtn").addEventListener("click", fetchCosmetics);
