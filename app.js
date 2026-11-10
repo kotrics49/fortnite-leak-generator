@@ -336,20 +336,51 @@ ctx.fillRect(x, y, cardW, cardH);
 
     ctx.font = `bold ${fontSize}px Arial`;
 
-    let name = item.name;
+   const words = item.name.split(" ");
+const lines = ["", ""];
 
-    while (
-      ctx.measureText(name).width > cardW - 10 &&
-      name.length > 5
-    ) {
-      name = name.slice(0, -2) + "…";
-    }
+for (const word of words) {
+  const candidate = lines[0]
+    ? lines[0] + " " + word
+    : word;
 
-    ctx.fillText(
-      name,
-      x + cardW / 2,
-      y + cardH - nameHeight / 2
-    );
+  if (
+    ctx.measureText(candidate).width <= cardW - 10 &&
+    !lines[1]
+  ) {
+    lines[0] = candidate;
+  } else {
+    lines[1] += (lines[1] ? " " : "") + word;
+  }
+}
+
+if (lines[1]) {
+  while (
+    ctx.measureText(lines[1] + "…").width > cardW - 10 &&
+    lines[1].length > 3
+  ) {
+    lines[1] = lines[1].slice(0, -1);
+  }
+
+  lines[1] = lines[1].trim() + "…";
+}
+
+const lineHeight = fontSize * 1.05;
+const centerY = y + cardH - nameHeight / 2;
+
+ctx.fillText(
+  lines[0],
+  x + cardW / 2,
+  centerY - (lines[1] ? lineHeight / 2 : 0)
+);
+
+if (lines[1]) {
+  ctx.fillText(
+    lines[1],
+    x + cardW / 2,
+    centerY + lineHeight / 2
+  );
+}
   }
 
   // Letöltés
