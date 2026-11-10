@@ -133,7 +133,7 @@ function normalize(data) {
   shopColors: entry.colors || null
 });
   }
-
+}
   if (!result.length) {
     throw new Error("Nem sikerült feldolgozni a shop ajánlatait.");
   }
