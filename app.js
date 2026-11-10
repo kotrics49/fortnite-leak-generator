@@ -132,7 +132,6 @@ function normalize(data) {
   color: getColor(item),
   shopColors: entry.colors || null
 });
-    }
   }
 
   if (!result.length) {
