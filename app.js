@@ -232,25 +232,20 @@ async function generate() {
   const ctx = canvas.getContext("2d");
 
   const W = 1080;
-  const H = 1920;
+const margin = 2;
+const gap = 3;
 
-  canvas.width = W;
-  canvas.height = H;
+const count = cosmetics.length;
+const cols = 7;
+const rows = Math.ceil(count / cols);
 
-  const count = cosmetics.length;
-
-  // Automatikus oszlopszám
-  let cols = 3;
-  if (count <= 12) cols = 2;
-  else if (count > 24) cols = 4;
-  else if (count > 40) cols = 5;
-
-  const rows = Math.ceil(count / cols);
-  const margin = 24;
-  const gap = 5;
-
-  const cardW = (W - margin * 2 - gap * (cols - 1)) / cols;
+const cardW = (W - margin * 2 - gap * (cols - 1)) / cols;
 const cardH = cardW;
+
+const H = margin * 2 + rows * (cardH + gap) - gap;
+
+canvas.width = W;
+canvas.height = H;
 
   // Háttér
   ctx.fillStyle = "#111111";
