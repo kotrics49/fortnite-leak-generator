@@ -397,3 +397,4 @@ if (lines[1]) {
 
 $("fetchBtn").addEventListener("click", fetchCosmetics);
 $("generateBtn").addEventListener("click", generate);
+});
