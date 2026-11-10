@@ -232,8 +232,8 @@ async function generate() {
   const ctx = canvas.getContext("2d");
 
   const W = 1080;
-const margin = 2;
-const gap = 3;
+const margin = 0;
+const gap = 2;
 
 const count = cosmetics.length;
 const cols = 7;
