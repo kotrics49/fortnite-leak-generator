@@ -98,11 +98,12 @@ function normalize(data) {
           added.add(id);
 
           result.push({
-            id,
-            name: bundle.name || "Bundle",
-            image,
-            color: firstItem ? getColor(firstItem) : "#a34be8"
-          });
+  id,
+  name: bundle.name || "Bundle",
+  image,
+  color: firstItem ? getColor(firstItem) : "#a34be8",
+  shopColors: entry.colors || null
+});
         }
       }
 
@@ -125,10 +126,12 @@ function normalize(data) {
       added.add(item.id);
 
       result.push({
-        id: item.id,
-        name: item.name,
-        image,
-        color: getColor(item)
+  id: item.id,
+  name: item.name,
+  image,
+  color: getColor(item),
+  shopColors: entry.colors || null
+});
       });
     }
   }
@@ -260,20 +263,31 @@ canvas.height = H;
     const x = margin + col * (cardW + gap);
     const y = margin + row * (cardH + gap);
 
-    // Eredeti Fortnite ritkasági háttér
-    const color = item.color || "#64748b";
+    // Eredeti Fortnite Item Shop háttérszínek
+const shopColors = item.shopColors || {};
 
-    ctx.fillStyle = color;
-    ctx.fillRect(x, y, cardW, cardH);
+const toColor = (value) => {
+  if (!value) return null;
+  return value.startsWith("#") ? value : "#" + value;
+};
 
-    // Enyhe sötétítés a kép mögött
-    const gradient = ctx.createLinearGradient(x, y, x, y + cardH);
-    gradient.addColorStop(0, "rgba(255,255,255,0.12)");
-    gradient.addColorStop(1, "rgba(0,0,0,0.25)");
+const color1 = toColor(shopColors.color1);
+const color2 = toColor(shopColors.color2);
+const color3 = toColor(shopColors.color3);
 
-    ctx.fillStyle = gradient;
-    ctx.fillRect(x, y, cardW, cardH);
+if (color1 && color2) {
+  const shopGradient = ctx.createLinearGradient(x, y, x, y + cardH);
 
+  shopGradient.addColorStop(0, color1);
+  shopGradient.addColorStop(0.5, color2);
+  shopGradient.addColorStop(1, color3 || color2);
+
+  ctx.fillStyle = shopGradient;
+} else {
+  ctx.fillStyle = item.color || "#64748b";
+}
+
+ctx.fillRect(x, y, cardW, cardH);
     // Tárgy képe
     const img = await loadImage(item.image);
 
